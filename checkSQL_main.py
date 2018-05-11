@@ -6,8 +6,11 @@ Created on Thu May 10 12:29:05 2018
 @author: airos
 
 Does a quick check of SQL databases and tables.
+Compares data by looking at each column's standard deviation, range, and inter-quartile range (if columns include floats)
+Can also compare data depending on dependent variables.
 Input required.
 
+requires 'checkSQL_db.py' to be in same working directory
 """
 
 from checkSQL_db import Find_SQL_DB, Explore_SQL, Explore_Data
