@@ -27,7 +27,9 @@ class Find_SQL_DB:
     def __init__(self):
         self.db_list = [db for db in glob.glob('*.db')]
         self.db_names = '%s' % ', '.join(self.db_list)
-        
+        self.stop = False
+        self.item_list = self.db_list
+        self.datacont_type = 'database(s)'
 
 class Explore_SQL:
     '''
@@ -39,6 +41,9 @@ class Explore_SQL:
         self.conn = sqlite3.connect(db_name)
         self.c = sqlite3.connect(db_name).cursor()
         self.tables = "Not yet defined. Run the method 'print_tables' or 'tables2list' to set this attribute"
+        self.stop = False
+        self.item_list = None
+        self.datacont_type = 'table(s)'
         
     def print_tables(self):
         try:
@@ -57,6 +62,7 @@ class Explore_SQL:
             table_list = self.c.fetchall()
             tables = [table_list[table][1] for table in range(len(table_list))]
             self.tables = "%s" % ", ".join(tables)
+            self.item_list = tables
             return(tables)
         except Error as e:
             print(e)
@@ -101,6 +107,9 @@ class Explore_Data:
         self.depvar_type = None
         self.depvar_numunique = None
         self.spec_depvar = None
+        self.stop = False
+        self.item_list = None
+        self.datacont_type = 'dependent variable(s)'
         
     def calc_std(self):
         if self.spec_depvar: 
@@ -130,6 +139,7 @@ class Explore_Data:
         last_col = self.columns[-1]
         self.depvar_type = type(self.dataframe[last_col][0])
         self.depvar = set(self.dataframe[last_col])
+        self.item_list = list(self.depvar)
         self.depvar_numunique = len(self.depvar)
         return None
     
@@ -158,8 +168,8 @@ class Explore_Data:
     
     
 class User_Input:
-    def __init__(self,text):
-        self.text = text
+    def __init__(self):
+        self.stop = False
         
     def str2index(self,items_list):
         try:
