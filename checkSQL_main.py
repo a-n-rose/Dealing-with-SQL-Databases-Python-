@@ -15,6 +15,12 @@ requires 'checkSQL_db.py' to be in same working directory
 
 from checkSQL_db import Find_SQL_DB, Explore_SQL, Explore_Data, User_Input
 
+def show_options(list_items,data_container):
+    print("\nAvailable {}:".format(data_container))
+    for item in range(len(list_items)):
+        print("{}) ".format(item+1), list_items[item])
+    print("\nWhich {} would you like to explore?".format(data_container))
+    return None
     
 if __name__ == '__main__':
     
@@ -27,10 +33,8 @@ if __name__ == '__main__':
             database_entry = False
             
             #list databases with a number for user to choose which to work with
-            print("\nAvailable Databases:")
-            for db in range(len(dbs_list)):
-                print("{}) ".format(db+1), dbs_list[db])
-            print("\nWhich database would you like to explore?")
+            show_options(dbs_list,'database(s)')
+
             while database_entry == False:
                 db_num = input("Please enter the number corresponding to the database: ")
                 db_input = User_Input(db_num)
@@ -44,10 +48,8 @@ if __name__ == '__main__':
             if tables:
                 table_entry = False
                 #list tables in database for user to choose from
-                print("\nAvailable tables:\n")
-                for i in range(len(tables)):
-                    print("{}) ".format(i+1),tables[i])
-                print("\nWhich table would you like to explore?")
+                show_options(tables,'table(s)')
+                
                 while table_entry == False:
                     table_num = input("Please enter the number corresponding to the table: ")
                     #checks input ---> gets table name
@@ -91,10 +93,8 @@ if __name__ == '__main__':
                     #list of the dependent variables with corresponding numbers --> user chooses which variable
                     dv_list = list(currdf.depvar)
                     while pause_explore == False:
-                        print("\nDependent variables to explore: \n")
-                        for dv in range(len(dv_list)):
-                            print("{}) ".format(dv+1),dv_list[dv])    
-                        print("\nWhich dependent variable are you interested in?: ")
+                        show_options(dv_list,'dependent variable(s)')
+                        
                         dv_num = input("Please enter the number corresponding to the variable: ")
                         dv_input = User_Input(dv_num)
                         dv_name, pause_explore = dv_input.str2index(dv_list)
