@@ -13,48 +13,52 @@ Input required.
 requires 'checkSQL_db.py' to be in same working directory
 """
 
-from checkSQL_db import Find_SQL_DB, Explore_SQL, Explore_Data, User_Input
+from checkSQL_db_edit import Find_SQL_DB, Explore_SQL, Explore_Data, User_Input
 
-def show_options(list_items,data_container):
-    print("\nAvailable {}:".format(data_container))
-    for item in range(len(list_items)):
-        print("{}) ".format(item+1), list_items[item])
-    print("\nWhich {} would you like to explore?".format(data_container))
+def show_options(datacont_instance):
+    data_cont = datacont_instance.datacont_type
+    data_list = datacont_instance.item_list
+    print("\nAvailable {}:".format(data_cont))
+    for item in range(len(data_list)):
+        print("{}) ".format(item+1), data_list[item])
+    print("\nWhich {} would you like to explore?".format(data_cont))
     return None
+
+def getDataCont_Name(input_instance,datacont_instance):
+    ii = input_instance
+    di = datacont_instance
+    data_cont = di.datacont_type
+    while ii.stop == False:
+        ii.text = input('Please enter the number corresponding to the {}: '.format(data_cont))
+        #checks the input and gets database name
+        datacont_name, ii.stop = ii.str2index(di.item_list)
+    return(datacont_name)
     
 if __name__ == '__main__':
     
     #first collect database names in current working directory (i.e. '.db' files)
     dbs = Find_SQL_DB()
-    dbs_list = dbs.db_list
-    if dbs_list:
-        exp_databases = True
-        while exp_databases == True:
-            database_entry = False
+    #dbs_list = dbs.db_list
+    if dbs.item_list:
+        #exp_databases = True
+        while dbs.stop == False:
+            #database_entry = False
             
             #list databases with a number for user to choose which to work with
-            show_options(dbs_list,'database(s)')
-
-            while database_entry == False:
-                db_num = input("Please enter the number corresponding to the database: ")
-                db_input = User_Input(db_num)
-                #checks the input and gets database name
-                db_name, database_entry = db_input.str2index(dbs_list)
+            show_options(dbs)
+            db_input = User_Input()
+            db_name = getDataCont_Name(db_input,dbs)
                 
             #establishes connection with SQL database via sqlite3
             #then list tables for user to choose which to work with
             currdb = Explore_SQL(db_name)
             tables = currdb.tables2list()
             if tables:
-                table_entry = False
-                #list tables in database for user to choose from
-                show_options(tables,'table(s)')
                 
-                while table_entry == False:
-                    table_num = input("Please enter the number corresponding to the table: ")
-                    #checks input ---> gets table name
-                    table_input = User_Input(table_num)
-                    table_name, table_entry = table_input.str2index(tables)
+                #list tables in database for user to choose from
+                show_options(currdb)
+                table_input = User_Input()
+                table_name = getDataCont_Name(table_input,currdb)
                 
                 #converts table data to pandas df
                 df = currdb.table2dataframe(table_name)
@@ -71,12 +75,12 @@ if __name__ == '__main__':
                             pause_explore = True
                             
                             #check if the user wants to explore data in another database before leaving program
-                            if len(dbs_list) > 1:
+                            if len(dbs.item_list) > 1:
                                 extra_db = False
                                 while extra_db == False:
                                     another_db = input("\nWould you like to explore data from another database? (yes or no): ")
                                     if 'no' in another_db.lower():
-                                        exp_databases = False
+                                        dbs.stop = True
                                         break
                                     elif 'yes' in another_db.lower():
                                         extra_db = True
@@ -93,13 +97,12 @@ if __name__ == '__main__':
                     #list of the dependent variables with corresponding numbers --> user chooses which variable
                     dv_list = list(currdf.depvar)
                     while pause_explore == False:
-                        show_options(dv_list,'dependent variable(s)')
-                        
-                        dv_num = input("Please enter the number corresponding to the variable: ")
-                        dv_input = User_Input(dv_num)
-                        dv_name, pause_explore = dv_input.str2index(dv_list)
-                        if pause_explore == True:
-                            currdf.print_profile(table_name, dv_name)
+                        show_options(currdf)
+                        dv_input = User_Input()
+                        dv_name = getDataCont_Name(dv_input,currdf)
+                        if dv_input.stop == True:
+                            pause_explore = True
+                        currdf.print_profile(table_name, dv_name)
                         again = False
                         while again == False and pause_explore == True:
                             
@@ -107,14 +110,14 @@ if __name__ == '__main__':
                             expmore = input("\nWould you like to explore another dependent variable? (yes or no): ")
                             if 'no' in expmore.lower():
                                 pause_explore = True
-                                if len(dbs_list) > 1:
+                                if len(dbs.item_list) > 1:
                                     extra_db = False
                                     while extra_db == False:
                                         another_db = input("\nWould you like to explore data from another database? (yes or no): ")
                                         
                                         #If user doesn't want to, check if they want to check out another database (if there's more than one)
                                         if 'no' in another_db.lower():
-                                            exp_databases = False
+                                            dbs.stop = True
                                             break
                                         elif 'yes' in another_db.lower():
                                             extra_db = True
@@ -129,12 +132,12 @@ if __name__ == '__main__':
                                 print("\nPlease enter 'yes' or 'no'\n")
                 
                 #if only 1 dependent variable and multiple databases, check if the user wants to look at other databases
-                if len(dbs_list) > 1:
+                if len(dbs.item_list) > 1:
                     extra_db = False
-                    while extra_db == False and exp_databases == True:
+                    while extra_db == False and dbs.stop == False:
                         another_db = input("\nWould you like to explore data from another database? (yes or no): ")
                         if 'no' in another_db.lower():
-                            exp_databases = False
+                            dbs.stop = True
                             break
                         elif 'yes' in another_db.lower():
                             extra_db = True
