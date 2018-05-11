@@ -6,19 +6,17 @@ Created on Thu May 10 12:29:05 2018
 @author: airos
 
 Does a quick check of SQL databases and tables.
-Compares data by looking at each column's standard deviation, range, and inter-quartile range (if columns include floats)
-Can also compare data depending on dependent variables.
 Input required.
 
-requires 'checkSQL_db.py' to be in same working directory
 """
 
 from checkSQL_db import Find_SQL_DB, Explore_SQL, Explore_Data
 
+
 class Error_Msg:
     def __init__(self):
-        self.msg = 'ERROR!'
-        self.att = "\n"+('!*'*20)+"\n"
+        self.msg = '\n\n\n'+('!*'*10)+' ERROR! '+'!*'*10+'\n'
+        self.att = '!*'*24
         
 def str2index(int_string,items_list):
     try:
@@ -27,18 +25,19 @@ def str2index(int_string,items_list):
             requested_item = items_list[ind]
             return(requested_item,True)
         else:
-            print("\nPlease enter an integer between 1 and "+str(len(items_list)))
+            print("\nPlease enter an integer between 1 and "+(str(len(items_list)))+'\n')
     except ValueError as ve:
-        print(Error_Msg().att)
+        print(Error_Msg().msg)
         print(ve)
         print("\nValue must be an integer\n".upper())
-    except IndexError as ie:
         print(Error_Msg().att)
+    except IndexError as ie:
+        print(Error_Msg().msg)
         print(ie)
         if len(items_list) > 1:
-            err_msg = "\nPlease enter an integer between 1 and "+str(len(items_list))
+            err_msg = "\nPlease enter an integer between 1 and "+(str(len(items_list)))+'\n'
         else:
-            err_msg = "\nPlease enter '1' if you would like to continue"
+            err_msg = "\nPlease enter '1' if you would like to continue\n"
         print(err_msg.upper())
         print(Error_Msg().att)
     return None, False
@@ -105,6 +104,7 @@ if __name__ == '__main__':
                             pause_explore = False
                         else:
                             print("\nPlease enter 'yes' or 'no'\n")
+                
         else:
             print("\n!! No tables found in database\n")
     else:
