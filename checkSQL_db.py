@@ -49,7 +49,6 @@ class Explore_SQL:
             print(self.tables)
         except Error as e:
             print(e)
-            
         return None
     
     def tables2list(self):
@@ -61,7 +60,6 @@ class Explore_SQL:
             return(tables)
         except Error as e:
             print(e)
-            
         return None
     
     def table2dataframe(self,table,row_start = None,row_lim=None):
@@ -79,15 +77,16 @@ class Explore_SQL:
             return(pd.DataFrame(data))
         except Error as e:
             print(e)
-        
         return None
     
     def close_conn_NOsave(self):
         self.conn.close()
+        return None
         
     def close_conn_commit(self):
         self.conn.commit()
         self.conn.close()
+        return None
     
 class Explore_Data:
     '''
@@ -155,7 +154,6 @@ class Explore_Data:
             print()
         except Exception as e:
             print(e)
-            
         return None
     
     
