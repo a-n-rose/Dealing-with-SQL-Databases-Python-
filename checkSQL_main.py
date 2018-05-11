@@ -25,6 +25,7 @@ if __name__ == '__main__':
         exp_databases = True
         while exp_databases == True:
             database_entry = False
+            
             #list databases with a number for user to choose which to work with
             print("\nAvailable Databases:")
             for db in range(len(dbs_list)):
@@ -35,7 +36,9 @@ if __name__ == '__main__':
                 db_input = User_Input(db_num)
                 #checks the input and gets database name
                 db_name, database_entry = db_input.str2index(dbs_list)
+                
             #establishes connection with SQL database via sqlite3
+            #then list tables for user to choose which to work with
             currdb = Explore_SQL(db_name)
             tables = currdb.tables2list()
             if tables:
@@ -50,6 +53,7 @@ if __name__ == '__main__':
                     #checks input ---> gets table name
                     table_input = User_Input(table_num)
                     table_name, table_entry = table_input.str2index(tables)
+                
                 #converts table data to pandas df
                 df = currdb.table2dataframe(table_name)
                 #conduct calculations and "learn" about data in table
@@ -63,6 +67,8 @@ if __name__ == '__main__':
                         examfurth = input("\nWould you like to explore data from a particular dependent variable? (yes or no): ")
                         if 'no' in examfurth.lower():
                             pause_explore = True
+                            
+                            #check if the user wants to explore data in another database before leaving program
                             if len(dbs_list) > 1:
                                 extra_db = False
                                 while extra_db == False:
@@ -80,6 +86,9 @@ if __name__ == '__main__':
                             pause_explore = False
                         else: 
                             print("\nPlease enter 'yes' or 'no'\n")           
+                    
+                    #if user wants to explore the data in the dependent variables
+                    #list of the dependent variables with corresponding numbers --> user chooses which variable
                     dv_list = list(currdf.depvar)
                     while pause_explore == False:
                         print("\nDependent variables to explore: \n")
@@ -93,6 +102,8 @@ if __name__ == '__main__':
                             currdf.print_profile(table_name, dv_name)
                         again = False
                         while again == False and pause_explore == True:
+                            
+                            #See if the user wants to continue exploring with another dependent variable
                             expmore = input("\nWould you like to explore another dependent variable? (yes or no): ")
                             if 'no' in expmore.lower():
                                 pause_explore = True
@@ -100,6 +111,8 @@ if __name__ == '__main__':
                                     extra_db = False
                                     while extra_db == False:
                                         another_db = input("\nWould you like to explore data from another database? (yes or no): ")
+                                        
+                                        #If user doesn't want to, check if they want to check out another database (if there's more than one)
                                         if 'no' in another_db.lower():
                                             exp_databases = False
                                             break
@@ -114,7 +127,8 @@ if __name__ == '__main__':
                                 pause_explore = False
                             else:
                                 print("\nPlease enter 'yes' or 'no'\n")
-                 
+                
+                #if only 1 dependent variable and multiple databases, check if the user wants to look at other databases
                 if len(dbs_list) > 1:
                     extra_db = False
                     while extra_db == False and exp_databases == True:
