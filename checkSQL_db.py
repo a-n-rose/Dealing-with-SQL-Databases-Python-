@@ -18,6 +18,7 @@ import pandas as pd
 import numpy as np
 import glob
 
+
 class Find_SQL_DB:
     '''
     Collects all databases in the current working directory
@@ -27,6 +28,7 @@ class Find_SQL_DB:
         self.db_list = [db for db in glob.glob('*.db')]
         self.db_names = '%s' % ', '.join(self.db_list)
         
+
 class Explore_SQL:
     '''
     Explores what tables are available in a database
@@ -79,6 +81,13 @@ class Explore_SQL:
             print(e)
         
         return None
+    
+    def close_conn_NOsave(self):
+        self.conn.close()
+        
+    def close_conn_commit(self):
+        self.conn.commit()
+        self.conn.close()
     
 class Explore_Data:
     '''
@@ -148,3 +157,38 @@ class Explore_Data:
             print(e)
             
         return None
+    
+    
+class User_Input:
+    def __init__(self,text):
+        self.text = text
+        
+    def str2index(self,items_list):
+        try:
+            ind = int(self.text)-1
+            if ind >= 0:
+                requested_item = items_list[ind]
+                return(requested_item,True)
+            else:
+                print("\nPlease enter an integer between 1 and "+(str(len(items_list)))+'\n')
+        except ValueError as ve:
+            print(Error_Msg().msg)
+            print(ve)
+            print("\nValue must be an integer\n".upper())
+            print(Error_Msg().att)
+        except IndexError as ie:
+            print(Error_Msg().msg)
+            print(ie)
+            if len(items_list) > 1:
+                err_msg = "\nPlease enter an integer between 1 and "+(str(len(items_list)))+'\n'
+            else:
+                err_msg = "\nPlease enter '1' if you would like to continue\n"
+            print(err_msg.upper())
+            print(Error_Msg().att)
+        return None, False
+        
+
+class Error_Msg:
+    def __init__(self):
+        self.msg = '\n\n\n'+('!*'*10)+' ERROR! '+'!*'*10+'\n'
+        self.att = '!*'*24
