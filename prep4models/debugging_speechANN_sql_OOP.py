@@ -68,6 +68,7 @@ if __name__ == '__main__':
                         
                         #if they want to apply a model on data from multiple places
                     
+                        #maybe offer choices to try out different models on their data? Linear Models to ANN/CNN...
                 
                 
                 
