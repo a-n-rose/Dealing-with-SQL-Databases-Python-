@@ -15,6 +15,7 @@ requires 'checkSQL_db.py' to be in same working directory
 
 from checkSQL_db_edit import Find_SQL_DB, Explore_SQL, Explore_Data, User_Input
 
+
 def show_options(datacont_instance):
     data_cont = datacont_instance.datacont_type
     data_list = datacont_instance.item_list
@@ -34,8 +35,23 @@ def getDataCont_Name(input_instance,datacont_instance):
         datacont_name, ii.stop = ii.str2index(di.item_list)
     return(datacont_name)
     
-if __name__ == '__main__':
+def stop_OR_go(data_container):
+    cont_input = User_Input()
+    while cont_input.stop == False:
+        cont_input.text = input("\nWould you like to explore data from additional {}? (yes or no): ".format(data_container))
+        if 'yes' or 'no' in cont_input.text.lower():
+            cont_input.stop = True
+            return(cont_input.text)
+        else:
+            print("\nPlease enter 'yes' or 'no'\n")
+    return None  
+
+def no_items(data_container1, data_container2):
+    print("\n!! No %s found in %s !!\n" % (data_container1,data_container2))
+    return None
     
+    
+if __name__ == '__main__':
     #first collect database names in current working directory (i.e. '.db' files)
     dbs = Find_SQL_DB()
     #dbs_list = dbs.db_list
@@ -54,99 +70,41 @@ if __name__ == '__main__':
             currdb = Explore_SQL(db_name)
             tables = currdb.tables2list()
             if tables:
-                
-                #list tables in database for user to choose from
-                show_options(currdb)
-                table_input = User_Input()
-                table_name = getDataCont_Name(table_input,currdb)
-                
-                #converts table data to pandas df
-                df = currdb.table2dataframe(table_name)
-                #conduct calculations and "learn" about data in table
-                currdf = Explore_Data(df)
-                currdf.print_profile(table_name)
-                if currdf.depvar_numunique > 1:
-                    cont_explore = False
-                    while cont_explore == False:
-                        
-                        #ask user if they would like to look at another variable
-                        examfurth = input("\nWould you like to explore data from a particular dependent variable? (yes or no): ")
-                        if 'no' in examfurth.lower():
-                            pause_explore = True
-                            
-                            #check if the user wants to explore data in another database before leaving program
-                            if len(dbs.item_list) > 1:
-                                extra_db = False
-                                while extra_db == False:
-                                    another_db = input("\nWould you like to explore data from another database? (yes or no): ")
-                                    if 'no' in another_db.lower():
-                                        dbs.stop = True
-                                        break
-                                    elif 'yes' in another_db.lower():
-                                        extra_db = True
-                                    else:
-                                        print("\nPlease enter 'yes' or 'no'\n")
-                            break
-                        elif 'yes' in examfurth.lower():
-                            cont_explore = True
-                            pause_explore = False
-                        else: 
-                            print("\nPlease enter 'yes' or 'no'\n")           
+                while currdb.stop == False:
+                    #list tables in database for user to choose from
+                    show_options(currdb)
+                    table_input = User_Input()
+                    table_name = getDataCont_Name(table_input,currdb)
                     
-                    #if user wants to explore the data in the dependent variables
-                    #list of the dependent variables with corresponding numbers --> user chooses which variable
-                    dv_list = list(currdf.depvar)
-                    while pause_explore == False:
-                        show_options(currdf)
-                        dv_input = User_Input()
-                        dv_name = getDataCont_Name(dv_input,currdf)
-                        if dv_input.stop == True:
-                            pause_explore = True
-                        currdf.print_profile(table_name, dv_name)
-                        again = False
-                        while again == False and pause_explore == True:
-                            
-                            #See if the user wants to continue exploring with another dependent variable
-                            expmore = input("\nWould you like to explore another dependent variable? (yes or no): ")
-                            if 'no' in expmore.lower():
-                                pause_explore = True
-                                if len(dbs.item_list) > 1:
-                                    extra_db = False
-                                    while extra_db == False:
-                                        another_db = input("\nWould you like to explore data from another database? (yes or no): ")
-                                        
-                                        #If user doesn't want to, check if they want to check out another database (if there's more than one)
-                                        if 'no' in another_db.lower():
-                                            dbs.stop = True
-                                            break
-                                        elif 'yes' in another_db.lower():
-                                            extra_db = True
-                                            currdb.close_conn_NOsave()
-                                        else:
-                                            print("\nPlease enter 'yes' or 'no'\n")
-                                break
-                            elif 'yes' in expmore.lower():
-                                again = True
-                                pause_explore = False
-                            else:
-                                print("\nPlease enter 'yes' or 'no'\n")
-                
-                #if only 1 dependent variable and multiple databases, check if the user wants to look at other databases
-                if len(dbs.item_list) > 1:
-                    extra_db = False
-                    while extra_db == False and dbs.stop == False:
-                        another_db = input("\nWould you like to explore data from another database? (yes or no): ")
-                        if 'no' in another_db.lower():
-                            dbs.stop = True
+                    #converts table data to pandas df
+                    df = currdb.table2dataframe(table_name)
+                    #conduct calculations and "learn" about data in table
+                    currdf = Explore_Data(df)
+                    currdf.print_profile(table_name)
+                    
+                    if currdf.depvar_numunique == 1:
+                        currdf.stop = True
+                    while currdf.stop == False:
+                        yes_no = stop_OR_go(currdf.datacont_type)
+                        if 'no' in yes_no:
+                            currdf.stop = True
                             break
-                        elif 'yes' in another_db.lower():
-                            extra_db = True
-                            currdb.close_conn_NOsave()
                         else:
-                            print("\nPlease enter 'yes' or 'no'\n")
-            
+                            show_options(currdf)
+                            dv_input = User_Input()
+                            dv_name = getDataCont_Name(dv_input,currdf)
+                            if dv_input.stop == True:
+                                currdf.print_profile(table_name, dv_name)
+                                
+                    if len(tables) == 1:
+                            currdb.stop == True
+                            break
+                    
             else:
-                print("\n!! No tables found in database\n")
+                no_items('tables','database')
+            if len(dbs.item_list) == 1:
+                dbs.stop = True
     else:
-        print("\n!! No databases found\n")
+        no_items('databases','directory')
+
     currdb.close_conn_NOsave()
