@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu May 10 12:29:05 2018
-
 @author: airos
 
 Does a quick check of SQL databases and tables.
@@ -14,7 +12,6 @@ requires 'checkSQL_db.py' to be in same working directory
 """
 
 from checkSQL_db_edit import Find_SQL_DB, Explore_SQL, Explore_Data, User_Input
-
 
 def show_options(datacont_instance):
     data_cont = datacont_instance.datacont_type
@@ -94,5 +91,4 @@ if __name__ == '__main__':
                     dbs.stop = True
     else:
         no_items('databases','directory')
-
     currdb.close_conn_NOsave()
