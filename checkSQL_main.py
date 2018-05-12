@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Thu May 10 12:29:05 2018
+
 @author: airos
 
 Does a quick check of SQL databases and tables.
@@ -12,6 +14,7 @@ requires 'checkSQL_db.py' to be in same working directory
 """
 
 from checkSQL_db_edit import Find_SQL_DB, Explore_SQL, Explore_Data, User_Input
+
 
 def show_options(datacont_instance):
     data_cont = datacont_instance.datacont_type
@@ -69,7 +72,6 @@ if __name__ == '__main__':
                         yes_no = stop_OR_go(currdf.datacont_type)
                         if 'no' in yes_no:
                             currdf.stop = True
-                            break
                         else:
                             show_options(currdf)
                             dv_input = User_Input()
@@ -78,12 +80,10 @@ if __name__ == '__main__':
                                 currdf.print_profile(table_name, dv_name)        
                     if len(tables) == 1:
                             currdb.stop == True
-                            break
                     else:
                         yes_no = stop_OR_go(currdb.datacont_type)
                         if 'no' in yes_no:
                             currdb.stop = True
-                            break  
             else:
                 no_items('tables','database')
             if len(dbs.item_list) == 1:
@@ -92,7 +92,7 @@ if __name__ == '__main__':
                 yes_no = stop_OR_go(dbs.datacont_type)
                 if 'no' in yes_no:
                     dbs.stop = True
-                    break
     else:
         no_items('databases','directory')
+
     currdb.close_conn_NOsave()
