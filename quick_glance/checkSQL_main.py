@@ -62,7 +62,7 @@ if __name__ == '__main__':
                     
                     #If there is only 1 table in the database, exit while statement
                     if len(tables) == 1:
-                            currdb.stop == True
+                            currdb.stop = True
                     else:
                         #Ask User if they would like to look at another table
                         yes_no = stop_OR_go(currdb.datacont_type)
