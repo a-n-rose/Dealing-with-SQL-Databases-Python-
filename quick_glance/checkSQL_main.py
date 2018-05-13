@@ -11,7 +11,7 @@ Input required.
 requires 'checkSQL_db.py' and 'checkSQL_UserFun.py' to be in same working directory
 """
 
-from checkSQL_db_edit import Find_SQL_DB, Explore_SQL, Explore_Data, User_Input
+from checkSQL_db import Find_SQL_DB, Explore_SQL, Explore_Data, User_Input
 from checkSQL_UserFun import show_options, getDataCont_Name, stop_OR_go, no_items
     
 if __name__ == '__main__':
