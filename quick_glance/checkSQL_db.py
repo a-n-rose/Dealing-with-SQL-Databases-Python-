@@ -18,7 +18,7 @@ import pandas as pd
 import numpy as np
 import glob
 
-
+#This should probs be removed
 class Find_SQL_DB:
     '''
     Collects all databases in the current working directory
@@ -94,6 +94,7 @@ class Explore_SQL:
         self.conn.close()
         return None
     
+#the __init__ function needs to be reviewed (probably for all classes).. still playing around
 class Explore_Data:
     '''
     Explores whether or not the last column (assumed to be dependent variable) contains categorical or continuous data
@@ -144,29 +145,27 @@ class Explore_Data:
         return None
     
     def print_profile(self,table_name,dep_var = None):
-        try:
-            self.spec_depvar = dep_var
-            print()
-            print('#'*80,'\n')
-            print("SQL table --",table_name,"-- profile: \n")
-            print("Columns: \n", self.columns)
-            self.explore_depvar()
-            print()
-            print("Dependent variable (i.e. column {}) type: \n".format(self.columns[-1]), self.depvar_type,"\n")
-            print("Number of dependent variables: \n", self.depvar_numunique,"\n")
-            print("Dependent variable(s): \n",self.depvar,"\n")
-            if dep_var:
-                print("Dependent variable of interest: ",self.spec_depvar,"\n")
-            print("Standard deviation of applicable columns: \n",self.calc_std(),"\n")
-            print("Range of applicable columns: \n", self.calc_range(),"\n")
-            print("Inter-quartile Range of applicable columns: \n",self.calc_iqr(),"\n")
-            print('#'*80)
-            print()
-        except Exception as e:
-            print(e)
+       
+        self.spec_depvar = dep_var
+        print()
+        print('#'*80,'\n')
+        print("SQL table --",table_name,"-- profile: \n")
+        print("Columns: \n", self.columns)
+        self.explore_depvar()
+        print()
+        print("Dependent variable (i.e. column {}) type: \n".format(self.columns[-1]), self.depvar_type,"\n")
+        print("Number of dependent variables: \n", self.depvar_numunique,"\n")
+        print("Dependent variable(s): \n",self.depvar,"\n")
+        if dep_var:
+            print("Dependent variable of interest: ",self.spec_depvar,"\n")
+        print("Standard deviation of applicable columns: \n",self.calc_std(),"\n")
+        print("Range of applicable columns: \n", self.calc_range(),"\n")
+        print("Inter-quartile Range of applicable columns: \n",self.calc_iqr(),"\n")
+        print('#'*80)
+        print()
         return None
     
-    
+#This should probs be deleted..   
 class User_Input:
     def __init__(self):
         self.stop = False
@@ -195,7 +194,7 @@ class User_Input:
             print(Error_Msg().att)
         return None, False
         
-
+#This is also not appropriate as a class
 class Error_Msg:
     def __init__(self):
         self.msg = '\n\n\n'+('!*'*10)+' ERROR! '+'!*'*10+'\n'
