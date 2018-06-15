@@ -200,6 +200,7 @@ class Explore_Data:
         if isinstance(self.depvar_type,float):
             self.item_list = ['Dependent Variable is Continuous']
             self.depvar_numunique = len(set(self.dataframe[last_col]))
+            self.depvar = 'Dependent Variable is Continuous'
         else:
             self.depvar = set(self.dataframe[last_col])
             self.item_list = list(self.depvar)
